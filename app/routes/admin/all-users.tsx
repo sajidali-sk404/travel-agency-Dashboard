@@ -1,10 +1,14 @@
-
+import { Header } from "components"
 
 const AllUser = () => {
   return (
-    <div>
-      Alluser
-    </div>
+    <main className="dashboard wrapper">
+    <Header
+    title={`Welcome Admin`}
+    descriptiion="This is your dashboard, you can manage your travel app from here"
+    />
+    all users
+  </main>
   )
 }
 
