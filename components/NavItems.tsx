@@ -1,13 +1,8 @@
-import { Link, NavLink } from "react-router"
+import { Link, NavLink, useLoaderData } from "react-router"
 import { sidebarItems } from "~/constants"
 import { cn } from "~/libs/utility"
 const NavItems = ( { handleClick }: { handleClick: ( ) => void}) => {
-    const user = {
-        name: "Sajid Ali",
-        email: "sajidali.sk404@gmail.com",
-        imageUrl: "/assets/images/david.webp"
-    }
-
+    const user = useLoaderData();
   return (
     <section className="nav-items">
         <Link to='/' className='link-logo'>

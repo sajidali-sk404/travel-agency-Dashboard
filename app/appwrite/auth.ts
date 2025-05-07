@@ -89,7 +89,7 @@ export const storeUserData = async () => {
         console.log(error);
     }
 }
-export const getExistingUser = async () => {
+export const getExistingUser = async (id:string) => {
     try {
         const user = await account.get();
         if(!user) return null;

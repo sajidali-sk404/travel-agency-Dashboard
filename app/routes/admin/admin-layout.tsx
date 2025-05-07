@@ -8,14 +8,15 @@ export async function clientLoader() {
     try {
         const user = await account.get();  
 
-        if (!user.$id) redirect('/sign-in');
+        if (!user.$id) return redirect('/sign-in');
 
           const existingUser = await getExistingUser(user.$id);
 
-          if (existingUser?.status !== 'admin') redirect('/') ;
-          console.log("existingUser", user.$id , "status", existingUser?.status);
+          if (existingUser?.status === 'user') {
+             return redirect('/') ;
+          }
 
-          return existingUser?.$id ? existingUser : await storeUserData()
+          return existingUser?.$id ? existingUser : await storeUserData();
     } catch (error) {
         console.error("Error in clientLoader:", error);
         return redirect('/sign-in')
@@ -30,7 +31,7 @@ const Adminlayout = () => {
             <NavItems />
         </SidebarComponent>
       </aside>
-      <aside className="children"><Outlet/></aside>
+      <aside className="children"><Outlet /></aside>
     </div>
   )
 }
