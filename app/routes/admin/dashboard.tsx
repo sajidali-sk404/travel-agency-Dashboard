@@ -1,16 +1,19 @@
 import { Header, StacksCard, TripCard } from "components"
 import { getUser } from "~/appwrite/auth";
 import { dashboardStats, user, allTrips  } from "~/constants";
-import type { Route } from './+types/dashboard'
+import type { Route } from './+types/dashboard'; 
 
 const { totalUsers, usersJoined, totalTrips, tripsCreated, userRole } = dashboardStats;
+export const clientLoader = async () => await getUser(); 
 
-  export const clientLoader = async () => await getUser(); 
+export async function loader() {
+  throw new Error("some error thrown in a loader");
+}
 
 
-const dashboard = ({ loaderData }: Route.ComponentProps) => {
+const Dashboard = ({ loaderData }: Route.ComponentProps) => {
   const user = loaderData as User | null;
-
+  console.log("dashboard user ",user)
 
   return (
     <main className="dashboard wrapper">
@@ -67,4 +70,4 @@ const dashboard = ({ loaderData }: Route.ComponentProps) => {
   )
 }
 
-export default dashboard
+export default Dashboard
