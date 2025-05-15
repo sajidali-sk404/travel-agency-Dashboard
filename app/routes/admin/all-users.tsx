@@ -1,9 +1,16 @@
 import { Header } from "components"
 import {ColumnDirective, ColumnsDirective, GridComponent} from '@syncfusion/ej2-react-grids'
-import { users } from "~/constants"
-import { cn } from "~/libs/utility"
+import { cn, formatDate } from "~/libs/utility"
+import { getAllUsers } from "~/appwrite/auth"
+import type { Route } from "./+types/all-users"
 
-const AllUser = () => {
+export const loader = async () => {
+  const { users , total } = await getAllUsers(10,0)
+  return {users, total}
+}
+
+const AllUser = ({loaderData}: Route.ComponentProps) => {
+  const { users, total } = loaderData; 
   return (
     <main className="all-users wrapper">
     <Header
@@ -17,10 +24,10 @@ const AllUser = () => {
                 field="name"
                 headerText="Name"
                 width="200"
-                textAlign="left"
-                template={(props: UseerData) =>(
+                textAlign='Left'
+                template={(props: UserData) =>(
                   <div className="flex items-center gap-1.5 px-4">
-                    <img src={props.imageUrl} alt="user" className="rounded-full size-8 aspect-square" />
+                    <img src={props.imageUrl} alt="user" className="rounded-full size-8 aspect-square" referrerPolicy="no-referrer" />
                         <span>{props.name}</span>
                   </div>
                 )}
@@ -28,31 +35,27 @@ const AllUser = () => {
 
             <ColumnDirective 
                 field="email"
-                headerText="Email"
-                width="150"
-                textAlign="left"
+                headerText="Email Address"
+                width="200"
+               textAlign='Left'
             />
 
             <ColumnDirective 
-                field="dateJoined"
-                headerText="DateJoined"
-                width="120"
-                textAlign="left"
+                field="joinedAt"
+                headerText="Date Joined"
+                width="140"
+                textAlign='Left'
+                template={({joinedAt}:{joinedAt:string}) => (
+                  formatDate(joinedAt)
+                )}
             />
 
-            
-            <ColumnDirective 
-                field="itineraryCreated"
-                headerText="Trip Created"
-                width="130"
-                textAlign="left"
-            /> 
 
             <ColumnDirective 
                 field="status"
                 headerText="Type"
                 width="130"
-                textAlign="left"
+                textAlign='Left'
                 template={({status}: UserData) => (
                   <article className={cn('status-column' , status === "user" ? 'bg-success-50' : 'bg-light-300')}>
                     <div className={cn("size-1.5 rounded-full", status === "user" ? 'bg-success-500' : 'bg-gray-500')}/>

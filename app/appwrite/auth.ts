@@ -1,6 +1,7 @@
 import { ID, OAuthProvider, Query } from "appwrite";
 import { account, appwriteConfig, database } from "~/appwrite/client";
 import { redirect } from "react-router";
+import { user } from "~/constants";
 
 
 
@@ -16,7 +17,7 @@ export const logOutUser = async () => {
         await account.deleteSession('current');
         return true;
     } catch (error) {
-        console.log(error);
+        console.log("logOutUser",error);
     }
 }
 export const getUser = async () => {
@@ -32,7 +33,7 @@ export const getUser = async () => {
         if(documents.length === 0) return await storeUserData();
 
     } catch (error) {
-        console.log(error);
+        console.log("getUser",error);
     }
 }
 export const getGooglePicture = async () => {
@@ -86,7 +87,7 @@ export const storeUserData = async () => {
         } )
         return newUser;
     } catch (error) {
-        console.log(error);
+       console.log("storeUserData",error);
     }
 }
 export const getExistingUser = async (id:string) => {
@@ -98,5 +99,21 @@ export const getExistingUser = async (id:string) => {
         return documents[0];
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const getAllUsers = async (limit:number, offset:number) => {
+    try {
+        const { documents:users, total } = await database.listDocuments(
+            appwriteConfig.databaseUrl,
+            appwriteConfig.userkeyUrl,
+            [Query.limit(limit), Query.offset(offset)]
+        )  
+        if(total === 0) return {user: [], total}
+        
+        return {users, total}
+    } catch (error) {
+        console.log("getAllUsers",error)
+        return {users:[], total:0}
     }
 }
