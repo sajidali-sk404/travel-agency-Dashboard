@@ -2,8 +2,13 @@ import { ComboBoxComponent } from "@syncfusion/ej2-react-dropdowns"
 import { Header } from "components"
 import type { Route } from "./+types/create-trip";
 import { comboBoxItems, selectItems } from "~/constants";
-import { formatKey } from "~/libs/utility";
-import { text } from "stream/consumers";
+import { cn, formatKey } from "~/libs/utility";
+import { Coordinate, LayerDirective, LayersDirective, MapsComponent } from "@syncfusion/ej2-react-maps";
+import { useState } from "react";
+import { world_map } from "~/constants/world_map";
+import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
+import { account } from "~/appwrite/client";
+
 
 
 export const loader = async () => {
@@ -20,17 +25,74 @@ export const loader = async () => {
 
 const createTrip = ({loaderData}:Route.ComponentProps) => {
   const countries = loaderData as Country[];
+
+  const [formData, setFormData] = useState<TripFormData>({
+      country: countries[0]?.name || '',
+      travelStyle: '',
+      interest:'',
+      budget: '',
+      duration:0,
+      groupType: ''    
+    })
   
+  const [error, seterror] = useState<string | null>(null)
+  const [loading, setloading] = useState(false)
+
   const countryData = countries.map((country) => ({
       text: country.name,
       value: country.value
 
     }
   ))
- 
-  const handleSubmit = async () => {} 
-  const handelChange = (key: keyof TripFormData, value:string | number) => {
 
+  const mapData = [
+    {
+      country: formData.country,
+      color: 'EA382E',
+      Coordinate: countries.find((c: Country) => c.name === formData.country)?.coordinates || []
+    }
+  ]
+ 
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setloading(true)
+
+    if(
+      !formData.country ||
+      !formData.travelStyle ||
+      !formData.interest ||
+      !formData.budget ||
+      !formData.groupType 
+      )
+      {
+      seterror('Plaese provide values for all fields')
+      setloading(false)
+      return;
+    }
+    if(formData.duration > 0 && formData.duration <= 10 ){
+      seterror('Duration must be between 1 and 10 Days')
+      setloading(false)
+      return;
+    }
+
+    const user = await account.get();
+    if(!user.$id) {
+      console.error('User not authenticated')
+      setloading(false)
+      return;
+    }
+
+    try {
+      
+    } catch (error) {
+      console.error('Generating error Trip', error)
+    } finally {
+      setloading(false)
+    }
+
+  };
+  const handelChange = (key: keyof TripFormData, value:string | number) => {
+    setFormData({ ...formData, [key]:value})
   }
 
   return (
@@ -113,6 +175,43 @@ const createTrip = ({loaderData}:Route.ComponentProps) => {
               />
             </div>
           ))}
+
+          <div>
+            <label htmlFor="location">Location on the World map</label>
+
+            <MapsComponent>
+              <LayersDirective>
+                <LayerDirective 
+                  shapeData={world_map}
+                  dataSource={mapData}
+                  shapePropertyPath="name"
+                  shapeDataPath="country"
+                  shapeSettings={{colorValuePath:'color', fill: '#e5e5e5'}}
+                />
+              </LayersDirective>
+            </MapsComponent>
+          </div>
+
+          <div className="bg-gray-200 h-px w-full"/>
+
+          {error && (
+            <div className="error">
+              <p>{error}</p>
+            </div>
+          )}
+
+          <footer className="px-6 w-full">
+            <ButtonComponent 
+              type="submit"
+              className="button-class !h-12 !w-full"
+              disabled={loading}
+            >
+              <img src={`/assets/icons/${loading ? 'loader.svg' : 'magic-star.svg'}`} alt="" className={cn("size-5", {'animate-spin':loading})} />
+              <span className="p-16-semibold text-white">
+                {loading ? 'Generating...' : 'Generate Trip'}
+              </span>
+            </ButtonComponent>
+          </footer>
       </form>
 
     </section>
