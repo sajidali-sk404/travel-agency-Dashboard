@@ -3,11 +3,12 @@ import { Header } from "components"
 import type { Route } from "./+types/create-trip";
 import { comboBoxItems, selectItems } from "~/constants";
 import { cn, formatKey } from "~/libs/utility";
-import { Coordinate, LayerDirective, LayersDirective, MapsComponent } from "@syncfusion/ej2-react-maps";
+import {  LayerDirective, LayersDirective, MapsComponent } from "@syncfusion/ej2-react-maps";
 import { useState } from "react";
 import { world_map } from "~/constants/world_map";
 import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 import { account } from "~/appwrite/client";
+import { useNavigate } from "react-router";
 
 
 
@@ -34,6 +35,8 @@ const createTrip = ({loaderData}:Route.ComponentProps) => {
       duration:0,
       groupType: ''    
     })
+
+    const navigate = useNavigate()
   
   const [error, seterror] = useState<string | null>(null)
   const [loading, setloading] = useState(false)
@@ -83,7 +86,24 @@ const createTrip = ({loaderData}:Route.ComponentProps) => {
     }
 
     try {
-      
+      const response = await fetch(`/api/create-trip`,{
+        method:'POST',
+        headers: {'content-type' : 'application/json'},
+        body: JSON.stringify({
+          country: formData.country,
+          numberOfDays: formData.duration,
+          travelStyles: formData.travelStyle,
+          interests: formData.interest,
+          budget: formData.budget,
+          groupTypes: formData.groupType,
+          userId: user.$id
+
+        })
+      })
+      const result: CreateTripResponse = await response.json()
+      if(result?.id) navigate(`/trips/${result.id}`)
+        else console.error('Failed Generating a trip')
+
     } catch (error) {
       console.error('Generating error Trip', error)
     } finally {
