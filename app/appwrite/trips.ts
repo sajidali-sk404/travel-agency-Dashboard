@@ -1,7 +1,7 @@
 import { Query } from "appwrite"
 import { appwriteConfig, database } from "~/appwrite/client"
 
-export const getAllTrips = async (limit:number,offset:number) => {
+export const getAllTrips = async (limit:number, offset:number) => {
     const allTrip = await database.listDocuments(
         appwriteConfig.databaseUrl,
         appwriteConfig.tripkeyUrl,

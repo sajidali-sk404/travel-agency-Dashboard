@@ -9,13 +9,13 @@ const loader = async ({ params }: LoaderFunctionArgs) => {
 
     if (!tripId) throw new Error('Trip ID is required');
 
-    const trip = await getTripById(tripId)
+    return await getTripById(tripId)
 
-    return trip;
+
 }
 const TripDetail = ({ loaderData }: Route.ComponentProps) => {
-    const tripData = parseTripData(loaderData?.tripDetails)
-    const { name } = tripData || {};
+    const tripData = parseTripData(loaderData?.tripDetail)
+    const { name } = tripData || {}; 
     return (
         <main className='travel-detail wrapper'>
             <Header title='Trip Details'  descriptiion='View and edit AI-generated Travel plans'/>
