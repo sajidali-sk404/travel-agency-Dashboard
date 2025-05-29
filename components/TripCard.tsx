@@ -4,7 +4,7 @@ import { ChipDirective, ChipListComponent, ChipsDirective } from "@syncfusion/ej
 import { cn, getFirstWord } from "~/libs/utility"
 
 
-const TripCard = ({id, name, location, imageUrl, tags, price }:TripCardProps) => {
+const TripCard = ({ id, name, location, imageUrl, tags, price }: TripCardProps) => {
   const path = useLocation()
   return (
     <Link to={path.pathname === '/' || path.pathname.startsWith("/travel") ? `/travel/${id}` : `/trips/${id}`} className="trip-card">
@@ -14,7 +14,7 @@ const TripCard = ({id, name, location, imageUrl, tags, price }:TripCardProps) =>
       <article>
         <h2>{name}</h2>
         <figure>
-          <img src="/assets/icons/location-mark.svg" alt="location" className="size-4"/>
+          <img src="/assets/icons/location-mark.svg" alt="location" className="size-4" />
           <figcaption>{location}</figcaption>
         </figure>
       </article>
@@ -23,16 +23,16 @@ const TripCard = ({id, name, location, imageUrl, tags, price }:TripCardProps) =>
         <ChipListComponent id="travel-chip">
           <ChipsDirective>
             {tags.map((tag, index) => (
-                <ChipDirective 
+              <ChipDirective
                 key={index}
-                text={getFirstWord(tag)} 
-                cssClass={cn(index === 1 ? '!bg-pink-50 !text-pink-500' : '!bg-success-50 !text-success-700')}               />
+                text={getFirstWord(tag)}
+                cssClass={cn(index === 1 ? '!bg-pink-50 !text-pink-500' : '!bg-success-50 !text-success-700')} />
             ))}
           </ChipsDirective>
         </ChipListComponent>
       </div>
 
-            <article className="tripCard-pill">{price}</article>
+      <article className="tripCard-pill">{price}</article>
     </Link>
   )
 }
